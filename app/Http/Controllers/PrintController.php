@@ -13,35 +13,54 @@ class PrintController extends Controller
 {
     // 
 
-     public function salesOrder(Request $request){
+     public function salesOrder(Request $request){ 
+
         try {
-            $p = new Printing('pos-58');
+             
+            $p = new Printing('POS-58');
             $helper = new Helper;
 
-            $length = 58;
+            $length = 32;
 
+            $p->setTitleHeader( 
+                'Enchanted Kingdom' 
+            );
 
+            $p->setQrCode(''.$request->os_number);
+            $p->setText(
+                $helper->EjCenterAlign(
+                    'Order slip no. : '.$request->os_number 
+                , $length)
+            );  
 
             //===================
-            foreach( $request->items as $item){ 
+            foreach( $request->data['items'] as $item){ 
   
-                Log::debug(
+                $p->setText(
                     $helper->EjCenterAlign(
                         $helper->EjJustifyAlign([
                             ''.$item['order_type'],
                             ''
-                        ],$length - 4) 
+                        ],$length) 
                     , $length)
                 );
                 
                 $netamount = ($item['ordered_qty'] * $item['item']['srp']);
-                Log::debug(
+                 $p->setText(
                     $helper->EjCenterAlign(
                         $helper->EjJustifyAlign([
                             $item['ordered_qty'].'x '.$item['item']['description'],
+                            ''
+                        ],$length) 
+                    , $length) 
+                ); 
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            '',
                             $helper->currencyFormat('Php', $netamount)
-                        ],$length - 4) 
-                    , $length)
+                        ],$length) 
+                    , $length) 
                 );
 
  
@@ -51,12 +70,20 @@ class PrintController extends Controller
                          
                         if( $components['item']['quantity'] > 0){    
                             $netamount = 0;
-                            Log::debug(
+                            $p->setText(
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '   + ('.$components['item']['quantity'].') '.$components['item']['description'],
+                                        ''
+                                    ],$length) 
+                                , $length)
+                            );
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '',
                                         $helper->currencyFormat('Php', $netamount)
-                                    ],$length - 4) 
+                                    ],$length) 
                                 , $length)
                             );
                         }
@@ -64,12 +91,20 @@ class PrintController extends Controller
                         foreach( $components[ 'selectable_items'] as $sitems){
                             if($sitems['qty'] > 0){  
                                 $netamount = $sitems['qty'] * $sitems['price'];
-                                Log::debug(
+                                $p->setText(
                                     $helper->EjCenterAlign(
                                         $helper->EjJustifyAlign([
                                             '   + ('.$sitems['qty'].') '.$sitems['short_code'],
+                                            ''
+                                        ],$length) 
+                                    , $length)
+                                );
+                                $p->setText(
+                                    $helper->EjCenterAlign(
+                                        $helper->EjJustifyAlign([
+                                            '',
                                             $helper->currencyFormat('Php', $netamount)
-                                        ],$length - 4) 
+                                        ],$length) 
                                     , $length)
                                 );
                             }
@@ -79,19 +114,26 @@ class PrintController extends Controller
                 }
                 
                 if( $item['instruction'] != null || $item['instruction'] != ''){
-                    Log::debug(
+                    $p->setText(
                         $helper->EjCenterAlign(
                             $helper->EjJustifyAlign([
                                 '   + '.$item['instruction'],
                                 ''
-                            ],$length - 4) 
+                            ],$length) 
                         , $length)
                     );
                 }
 
             }
             //===================
-
+            $p->feed();
+            $p->setText(
+                $helper->EjCenterAlign(
+                    '============================='
+                , $length)
+            );
+            $p->feed(3); 
+            $p->close();
 
             return response()->json([
                 'success'       => true,
