@@ -11,11 +11,11 @@ class TestPrintController extends Controller
 {
     // 
     public function test(Request $request){
-        $connector = new WindowsPrintConnector('POS-58');
+        $connector = new WindowsPrintConnector('POS80 Printer');
         $printer = new Printer($connector);
 
-        $printer->setTextSize(1, 2);
-        $printer-> text('test');
+         
+        $printer-> text('1234567890123456789012345678901234567890123456');
 
         // $printer->feed();
         // $printer->setJustification(Printer::JUSTIFY_CENTER);

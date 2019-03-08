@@ -16,41 +16,90 @@ class PrintController extends Controller
      public function salesOrder(Request $request){ 
 
         try {
-             
-            $p = new Printing('POS-58');
+            
+            $printer_name = config( 'maintenance.printer_name');
+            $printer_width= config( 'maintenance.printer_width');
+
+            $p = new Printing('POS80 Printer');
             $helper = new Helper;
 
-            $length = 32;
+            $length = $printer_width;
 
             $p->setTitleHeader( 
                 'Enchanted Kingdom' 
             );
 
             $p->setQrCode(''.$request->os_number);
+            $p->feed();
             $p->setText(
                 $helper->EjCenterAlign(
                     'Order slip no. : '.$request->os_number 
                 , $length)
             );  
+            $p->feed();
+
+            /**
+             * Customer Information
+             */
+            if($request->data['others']['mobile_number'] != null){
+
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        'Customer Information' 
+                    , $length)
+                );
+
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            'Name',
+                            ''.$request->data['others']['customer_name']
+                        ],$length-4) 
+                    , $length)
+                );
+
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            'Mobile No.',
+                            ''.$request->data['others']['mobile_number']
+                        ],$length-4) 
+                    , $length)
+                );
+
+            }
+
+            /**
+             * CURRENCY
+             */
+            $p->feed();
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        '',
+                        '('.config('maintenance.currency').')'
+                    ],$length) 
+                , $length)
+            );
 
             //===================
             foreach( $request->data['items'] as $item){ 
   
-                $p->setText(
-                    $helper->EjCenterAlign(
-                        $helper->EjJustifyAlign([
-                            ''.$item['order_type'],
-                            ''
-                        ],$length) 
-                    , $length)
-                );
+                // $p->setText(
+                //     $helper->EjCenterAlign(
+                //         $helper->EjJustifyAlign([
+                //             ''.$item['order_type'],
+                //             ''
+                //         ],$length) 
+                //     , $length)
+                // );
                 
                 $netamount = ($item['ordered_qty'] * $item['item']['srp']);
                  $p->setText(
                     $helper->EjCenterAlign(
                         $helper->EjJustifyAlign([
                             $item['ordered_qty'].'x '.$item['item']['description'],
-                            ''
+                            ''.$item['order_type']
                         ],$length) 
                     , $length) 
                 ); 
@@ -58,7 +107,7 @@ class PrintController extends Controller
                     $helper->EjCenterAlign(
                         $helper->EjJustifyAlign([
                             '',
-                            $helper->currencyFormat('Php', $netamount)
+                            $helper->currencyFormat('', $netamount)
                         ],$length) 
                     , $length) 
                 );
@@ -82,7 +131,7 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '',
-                                        $helper->currencyFormat('Php', $netamount)
+                                        $helper->currencyFormat('', $netamount)
                                     ],$length) 
                                 , $length)
                             );
@@ -94,7 +143,7 @@ class PrintController extends Controller
                                 $p->setText(
                                     $helper->EjCenterAlign(
                                         $helper->EjJustifyAlign([
-                                            '   + ('.$sitems['qty'].') '.$sitems['short_code'],
+                                            '  +('.$sitems['qty'].')'.$sitems['short_code'],
                                             ''
                                         ],$length) 
                                     , $length)
@@ -103,7 +152,7 @@ class PrintController extends Controller
                                     $helper->EjCenterAlign(
                                         $helper->EjJustifyAlign([
                                             '',
-                                            $helper->currencyFormat('Php', $netamount)
+                                            $helper->currencyFormat('', $netamount)
                                         ],$length) 
                                     , $length)
                                 );
@@ -117,7 +166,7 @@ class PrintController extends Controller
                     $p->setText(
                         $helper->EjCenterAlign(
                             $helper->EjJustifyAlign([
-                                '   + '.$item['instruction'],
+                                '  + '.$item['instruction'],
                                 ''
                             ],$length) 
                         , $length)
@@ -132,7 +181,7 @@ class PrintController extends Controller
                     '============================='
                 , $length)
             );
-            $p->feed(3); 
+            $p->feed(2); 
             $p->close();
 
             return response()->json([

@@ -29,7 +29,7 @@ class Printing {
     public function setTitleHeader( $val){
         $this->printer->feed();
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-        $this->printer->setTextSize(1, 2);
+        $this->printer->setTextSize(2, 2);
         $this->printer->text($val."\n");
         $this->printer->selectPrintMode(); // Reset
         $this->printer->setJustification(); // Reset
@@ -43,7 +43,7 @@ class Printing {
     public function setQrCode($val){
         $this->printer->feed();
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-        $this->printer->qrCode(''.$val, Printer::QR_ECLEVEL_L,8);   
+        $this->printer->qrCode(''.$val, Printer::QR_ECLEVEL_L,10);   
         $this->printer->setJustification(); // Reset
         // $this->printer->feed(); 
     }
