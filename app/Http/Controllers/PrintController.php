@@ -36,7 +36,7 @@ class PrintController extends Controller
                     'Order slip no. : '.$request->os_number 
                 , $length)
             );  
-            $p->feed();
+            // $p->feed();
 
             /**
              * Customer Information
@@ -45,7 +45,7 @@ class PrintController extends Controller
 
                 $p->setText(
                     $helper->EjCenterAlign(
-                        'Customer Information' 
+                        '--- Customer Information ---' 
                     , $length)
                 );
 
@@ -99,7 +99,7 @@ class PrintController extends Controller
                     $helper->EjCenterAlign(
                         $helper->EjJustifyAlign([
                             $item['ordered_qty'].'x '.$item['item']['description'],
-                            ''.$item['order_type']
+                            '('.$item['order_type'].')'
                         ],$length) 
                     , $length) 
                 ); 
@@ -122,19 +122,19 @@ class PrintController extends Controller
                             $p->setText(
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
-                                        '   + ('.$components['item']['quantity'].') '.$components['item']['description'],
-                                        ''
+                                        '  + ('.$components['item']['quantity'].')'.$components['item']['description'],
+                                        ''.$helper->currencyFormat('', $netamount)
                                     ],$length) 
                                 , $length)
                             );
-                            $p->setText(
-                                $helper->EjCenterAlign(
-                                    $helper->EjJustifyAlign([
-                                        '',
-                                        $helper->currencyFormat('', $netamount)
-                                    ],$length) 
-                                , $length)
-                            );
+                            // $p->setText(
+                            //     $helper->EjCenterAlign(
+                            //         $helper->EjJustifyAlign([
+                            //             '',
+                            //             $helper->currencyFormat('', $netamount)
+                            //         ],$length) 
+                            //     , $length)
+                            // );
                         }
 
                         foreach( $components[ 'selectable_items'] as $sitems){
@@ -143,19 +143,19 @@ class PrintController extends Controller
                                 $p->setText(
                                     $helper->EjCenterAlign(
                                         $helper->EjJustifyAlign([
-                                            '  +('.$sitems['qty'].')'.$sitems['short_code'],
-                                            ''
+                                            '  + ('.$sitems['qty'].')'.$sitems['short_code'],
+                                            ''.$helper->currencyFormat('', $netamount)
                                         ],$length) 
                                     , $length)
                                 );
-                                $p->setText(
-                                    $helper->EjCenterAlign(
-                                        $helper->EjJustifyAlign([
-                                            '',
-                                            $helper->currencyFormat('', $netamount)
-                                        ],$length) 
-                                    , $length)
-                                );
+                                // $p->setText(
+                                //     $helper->EjCenterAlign(
+                                //         $helper->EjJustifyAlign([
+                                //             '',
+                                //             $helper->currencyFormat('', $netamount)
+                                //         ],$length) 
+                                //     , $length)
+                                // );
                             }
                         }
                         
