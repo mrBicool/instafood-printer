@@ -137,6 +137,14 @@ class Helper
         return $r;
     }
 
+    public function charDuplicator($char, $length){
+        $output = '';
+        for($i = 0; $i < $length; $i++){
+            $output = $output.$char;
+        } 
+        return $output;
+    }
+
     public function currencyFormat($sign,$amount){
         return $sign.' '.number_format( $amount , 2, '.', ',');
     }

@@ -65,7 +65,7 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Date&Time :',
                         ''.$request->created_at
-                    ],$length - 16) 
+                    ],$length - 16)
                 , $length)
             );
 
@@ -84,8 +84,9 @@ class PrintController extends Controller
             /**
              * Customer Information
              */
+             $p->feed();
             if($request->data['others']['mobile_number'] != null){
-                $p->feed();
+               
                 $p->setText(
                     $helper->EjCenterAlign(
                         '--- Customer Information ---' 
@@ -109,8 +110,29 @@ class PrintController extends Controller
                         ],$length-16) 
                     , $length)
                 );
-
             }
+
+            /**
+             * Head Count
+             */
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('-', 32)
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'HeadCount :',
+                        ''.$request->data['others']['headcounts']['regular']
+                    ],$length - 16) 
+                 , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('-', 32)
+                , $length)
+            );
 
             /**
              * ITEMs INITIALIZATION
@@ -331,11 +353,11 @@ class PrintController extends Controller
                         )
                     );
                 }
-            }
+            } 
 
             /**
              * Sub Total
-             */
+             */ 
             $p->feed();
             $p->setText(
                 $helper->EjCenterAlign(
@@ -356,7 +378,7 @@ class PrintController extends Controller
 
             $p->setText(
                 $helper->EjCenterAlign(
-                    '================================'
+                    $helper->charDuplicator('=', 32)
                 , $length)
             );
             $p->feed(2); 
