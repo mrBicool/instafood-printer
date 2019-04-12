@@ -23,4 +23,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/print/sales-order', 'PrintController@salesOrder');
+Route::post('/print/sales-order',   'PrintController@salesOrder');
+Route::post('/print/order-slip',    'PrintController@orderSlip');

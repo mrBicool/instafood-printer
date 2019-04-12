@@ -9,6 +9,7 @@ use App\AppServices\Helper;
  
 use App\AppServices\Printing;
 use Carbon\Carbon;
+use function GuzzleHttp\json_encode;
 
 class PrintController extends Controller
 {
@@ -399,4 +400,140 @@ class PrintController extends Controller
         }
      }
 
+     public function orderSlip(Request $request){
+        try {
+
+            $printer_name = config( 'maintenance.printer_name');
+            $printer_width= config( 'maintenance.printer_width');
+
+            $p = new Printing($printer_name);
+            $helper = new Helper;  
+            $length = $printer_width;
+
+            $header     = (object)$request->os['header'];
+            $details    = (object)$request->os['details']; 
+
+            $p->setTitleHeader( 
+                $request->header 
+            );
+
+            /**
+             * QR Code for OS no.
+             */
+            $p->setQrCode(''.$header->orderslip_header_id);
+
+            /**
+             * ORDER SLIP NO.
+             */
+            $p->feed();
+            $p->setText(
+                $helper->EjCenterAlign(
+                    'Order slip no. : '.$header->orderslip_header_id
+                , $length)
+            );   
+
+            /**
+             * Customer Information
+             */
+            $p->feed(); 
+            if($header->mobile_number != null){
+           
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        '--- Customer Information ---' 
+                    , $length)
+                );
+    
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            'Name',
+                            ''.$header->customer_name
+                        ],$length-16) 
+                    , $length)
+                );
+    
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            'Mobile No.',
+                            ''.$header->mobile_number
+                        ],$length-16) 
+                    , $length)
+                );
+            }
+
+            /**
+             * Head Count
+             */
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('-', 32)
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'HeadCount :',
+                        ''.$header->total_hc
+                    ],$length - 16)
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('-', 32)
+                , $length)
+            );
+
+            /**
+             * ITEMs INITIALIZATION
+             */
+            $itemCollections    = collect( $details );
+
+            // dont know what to do here haha
+            $dine_in    = $itemCollections->filter( function($obj){ 
+                $obj = collect($obj);
+                $obj->map(function ($item, $key) {
+                    $item = collect($item);
+                    $item->map(function ($prod, $key) {
+                        return $prod['order_type'] == 1;
+                    });
+                });
+            });
+
+            $take_out   = $itemCollections->where('order_type', 2); // sample only
+
+            // sample return json
+            return json_encode([
+                'items' => $itemCollections,
+                'dine_in'   => $dine_in
+            ]);
+            
+
+            $p->feed(2);
+            $p->setText(
+                $helper->EjCenterAlign(
+                '!!! THANK YOU !!!' 
+                , $length)
+            );
+            $p->feed(); 
+
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('=', 32)
+                , $length)
+            );
+
+            $p->feed(2); 
+            $p->close();
+            return json_encode($request->all());
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                'success'   => false,
+                'error'     => $e->getMessage()
+            ]); 
+        }
+         
+     }
 }

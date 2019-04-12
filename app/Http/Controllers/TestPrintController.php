@@ -11,7 +11,7 @@ class TestPrintController extends Controller
 {
     // 
     public function test(Request $request){
-        $connector = new WindowsPrintConnector('POS80 Printer');
+        $connector = new WindowsPrintConnector(config( 'maintenance.printer_name'));
         $printer = new Printer($connector);
 
          
