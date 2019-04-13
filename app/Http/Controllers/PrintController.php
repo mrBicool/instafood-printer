@@ -401,8 +401,7 @@ class PrintController extends Controller
      }
 
      public function orderSlip(Request $request){
-        try {
-
+        try { 
             $printer_name = config( 'maintenance.printer_name');
             $printer_width= config( 'maintenance.printer_width');
 
@@ -411,7 +410,7 @@ class PrintController extends Controller
             $length = $printer_width;
 
             $header     = (object)$request->os['header'];
-            $details    = (object)$request->os['details']; 
+            $details    = (object)$request->os['details'];  
 
             $p->setTitleHeader( 
                 $request->header 
@@ -431,6 +430,44 @@ class PrintController extends Controller
                     'Order slip no. : '.$header->orderslip_header_id
                 , $length)
             );   
+
+            /**
+             * SERVER NAME
+             */
+            $p->feed();
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'Server :',
+                        ''.$request->server_info['name']
+                    ],$length - 16) 
+                , $length)
+            );
+
+            /**
+             * DATE CREATED
+             */
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'Date&Time :',
+                        ''.now()
+                    ],$length - 16)
+                , $length)
+            );
+
+            /**
+             * CURRENCY
+             */
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'Currency :',
+                        '('.$request->currency.')'
+                    ] , $length - 16) 
+                , $length)
+            );
+
 
             /**
              * Customer Information
@@ -491,23 +528,117 @@ class PrintController extends Controller
             $itemCollections    = collect( $details );
 
             // dont know what to do here haha
-            $dine_in    = $itemCollections->filter( function($obj){ 
-                $obj = collect($obj);
-                $obj->map(function ($item, $key) {
-                    $item = collect($item);
-                    $item->map(function ($prod, $key) {
-                        return $prod['order_type'] == 1;
-                    });
-                });
-            });
+            $dine_in    = $this->returnFilteredByOrderType($itemCollections,1);
+            $dine_in    = collect($dine_in)->groupBy(['main_product_id','sequence']);
 
-            $take_out   = $itemCollections->where('order_type', 2); // sample only
+            $take_out   = $this->returnFilteredByOrderType($itemCollections,2);
+            $take_out   = collect($take_out)->groupBy(['main_product_id','sequence']);
 
-            // sample return json
-            return json_encode([
-                'items' => $itemCollections,
-                'dine_in'   => $dine_in
-            ]);
+            /**
+             * DINE IN
+             */
+            if( $dine_in->count() > 0){
+                $p->feed();
+                $p->setText(
+                    $helper->EjCenterAlign(
+                    '---- Dine In ----' 
+                    , $length)
+                );
+            }
+
+            $remarks = '';
+            foreach($dine_in as $__item){
+                foreach($__item as $_item){
+                     foreach($_item as $item){
+                         if($item->product_id == $item->main_product_id){ 
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        $item->qty.'x '.$item->name,
+                                        ''.$helper->currencyFormat('', $item->amount)
+                                    ],$length) 
+                                , $length) 
+                            ); 
+                            $remarks = $item->remarks;
+                         }else{
+                            $netamount = $item->qty * $item->srp;
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '  + ('.$item->qty.')'.$item->name,
+                                        ''.$helper->currencyFormat('', $netamount)
+                                    ],$length) 
+                                , $length)
+                            );
+                         } 
+                     }
+                }
+            } 
+
+            if($remarks != null || $remarks != ''){
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            '  + '.$remarks,
+                            ''
+                        ],$length) 
+                    , $length)
+                );
+            }
+
+            /**
+             * TAKE OUT
+             */
+            if( $take_out->count() > 0){
+                $p->feed();
+                $p->setText(
+                    $helper->EjCenterAlign(
+                    '---- Take Out ----' 
+                    , $length)
+                );
+            }
+
+            $remarks = '';
+            foreach($take_out as $__item){
+                foreach($__item as $_item){
+                     foreach($_item as $item){
+                         if($item->product_id == $item->main_product_id){ 
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        $item->qty.'x '.$item->name,
+                                        ''.$helper->currencyFormat('', $item->amount)
+                                    ],$length) 
+                                , $length) 
+                            ); 
+                            $remarks = $item->remarks;
+                         }else{
+                            $netamount = $item->qty * $item->srp;
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '  + ('.$item->qty.')'.$item->name,
+                                        ''.$helper->currencyFormat('', $netamount)
+                                    ],$length) 
+                                , $length)
+                            );
+                         } 
+                     }
+                }
+            } 
+
+            if($remarks != null || $remarks != ''){
+                $p->setText(
+                    $helper->EjCenterAlign(
+                        $helper->EjJustifyAlign([
+                            '  + '.$remarks,
+                            ''
+                        ],$length) 
+                    , $length)
+                );
+            }
+             
+
             
 
             $p->feed(2);
@@ -535,5 +666,20 @@ class PrintController extends Controller
             ]); 
         }
          
+     }
+
+     private function returnFilteredByOrderType($items, $type){
+        $newItems = []; 
+        foreach($items as $__item){
+            foreach($__item as $_item){
+                 foreach($_item as $item){
+                    $obj = (object)$item; 
+                    if($obj->order_type == $type){
+                        array_push($newItems, $obj);
+                    }
+                 }
+            }
+        } 
+        return $newItems;
      }
 }

@@ -170,12 +170,12 @@ Route::get('/asdasd', function(Request $request){
             //         $helper->EjJustifyAlign([
             //             ''.$item['order_type'],
             //             ''
-            //         ],$length) 
+            //         ],$length)
             //     , $length)
             // );
             
             $netamount = ($item['ordered_qty'] * $item['item']['srp']);
-             $p->setText(
+            $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
                         $item['ordered_qty'].'x '.$item['item']['description'],
