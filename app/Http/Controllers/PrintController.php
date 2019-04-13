@@ -526,6 +526,7 @@ class PrintController extends Controller
              * ITEMs INITIALIZATION
              */
             $itemCollections    = collect( $details );
+            $sub_total = 0;
 
             // dont know what to do here haha
             $dine_in    = $this->returnFilteredByOrderType($itemCollections,1);
@@ -550,7 +551,7 @@ class PrintController extends Controller
             foreach($dine_in as $__item){
                 foreach($__item as $_item){
                      foreach($_item as $item){
-                         if($item->product_id == $item->main_product_id){ 
+                         if($item->product_id == $item->main_product_id){  
                             $p->setText(
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
@@ -560,6 +561,7 @@ class PrintController extends Controller
                                 , $length) 
                             ); 
                             $remarks = $item->remarks;
+                            $sub_total += $item->amount;
                          }else{
                             $netamount = $item->qty * $item->srp;
                             $p->setText(
@@ -570,6 +572,7 @@ class PrintController extends Controller
                                     ],$length) 
                                 , $length)
                             );
+                            $sub_total += $netamount;
                          } 
                      }
                 }
@@ -612,6 +615,7 @@ class PrintController extends Controller
                                 , $length) 
                             ); 
                             $remarks = $item->remarks;
+                            $sub_total += $item->amount;
                          }else{
                             $netamount = $item->qty * $item->srp;
                             $p->setText(
@@ -622,6 +626,7 @@ class PrintController extends Controller
                                     ],$length) 
                                 , $length)
                             );
+                            $sub_total += $netamount;
                          } 
                      }
                 }
@@ -638,7 +643,23 @@ class PrintController extends Controller
                 );
             }
              
-
+            /**
+             * Sub Total
+             */ 
+            $p->feed();
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->charDuplicator('-', 32)
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'Sub Total :',
+                        ''.$helper->currencyFormat('', $sub_total)
+                    ],$length - 16) 
+                , $length)
+            );
             
 
             $p->feed(2);
