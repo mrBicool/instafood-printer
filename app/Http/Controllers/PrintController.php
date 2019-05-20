@@ -52,7 +52,7 @@ class PrintController extends Controller
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
-                        'Server :',
+                        'Server:',
                         ''.$request->server_name
                     ],$length - 16) 
                 , $length)
@@ -64,7 +64,7 @@ class PrintController extends Controller
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
-                        'Date&Time :',
+                        'Date&Time:',
                         ''.$request->created_at
                     ],$length - 16)
                 , $length)
@@ -76,7 +76,7 @@ class PrintController extends Controller
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
-                        'Currency :',
+                        'Currency:',
                         '('.config('maintenance.currency').')'
                     ] , $length - 16) 
                  , $length)
@@ -440,7 +440,7 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Server :',
                         ''.$request->server_info['name']
-                    ],$length - 16) 
+                    ],$length - 2) 
                 , $length)
             );
 
@@ -452,7 +452,7 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Date&Time :',
                         ''.now()
-                    ],$length - 16)
+                    ],$length - 2)
                 , $length)
             );
 
@@ -464,7 +464,7 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Currency :',
                         '('.$request->currency.')'
-                    ] , $length - 16) 
+                    ] , $length - 2) 
                 , $length)
             );
 
@@ -486,7 +486,7 @@ class PrintController extends Controller
                         $helper->EjJustifyAlign([
                             'Name',
                             ''.$header->customer_name
-                        ],$length-16) 
+                        ],$length-2) 
                     , $length)
                 );
     
@@ -495,7 +495,7 @@ class PrintController extends Controller
                         $helper->EjJustifyAlign([
                             'Mobile No.',
                             ''.$header->mobile_number
-                        ],$length-16) 
+                        ],$length-2) 
                     , $length)
                 );
             }
@@ -505,20 +505,20 @@ class PrintController extends Controller
              */
             $p->setText(
                 $helper->EjCenterAlign(
-                    $helper->charDuplicator('-', 32)
+                    $helper->charDuplicator('-', 28)
                 , $length)
             );
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
-                        'HeadCount :',
+                        'HeadCount:',
                         ''.$header->total_hc
-                    ],$length - 16)
+                    ],$length - 6)
                 , $length)
             );
             $p->setText(
                 $helper->EjCenterAlign(
-                    $helper->charDuplicator('-', 32)
+                    $helper->charDuplicator('-', 28)
                 , $length)
             );
 
@@ -556,10 +556,20 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         $item->qty.'x '.$item->name,
-                                        ''.$helper->currencyFormat('', $item->amount)
+                                        ''
                                     ],$length) 
                                 , $length) 
                             ); 
+                            
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '',
+                                        ''.$helper->currencyFormat('', $item->amount)
+                                    ],$length)
+                                , $length)
+                            );
+
                             $remarks = $item->remarks;
                             $sub_total += $item->amount;
                          }else{
@@ -568,10 +578,20 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '  + ('.$item->qty.')'.$item->name,
-                                        ''.$helper->currencyFormat('', $netamount)
+                                        ''
                                     ],$length) 
                                 , $length)
                             );
+
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '',
+                                        ''.$helper->currencyFormat('', $item->amount)
+                                    ],$length)
+                                , $length)
+                            );
+
                             $sub_total += $netamount;
                          } 
                      }
@@ -649,7 +669,7 @@ class PrintController extends Controller
             $p->feed();
             $p->setText(
                 $helper->EjCenterAlign(
-                    $helper->charDuplicator('-', 32)
+                    $helper->charDuplicator('-', 16)
                 , $length)
             );
             $p->setText(
@@ -657,7 +677,7 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Sub Total :',
                         ''.$helper->currencyFormat('', $sub_total)
-                    ],$length - 16) 
+                    ],$length - 2) 
                 , $length)
             );
             
@@ -672,7 +692,7 @@ class PrintController extends Controller
 
             $p->setText(
                 $helper->EjCenterAlign(
-                    $helper->charDuplicator('=', 32)
+                    $helper->charDuplicator('=', 16)
                 , $length)
             );
 
