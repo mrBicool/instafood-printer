@@ -630,10 +630,21 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         $item->qty.'x '.$item->name,
-                                        ''.$helper->currencyFormat('', $item->amount)
+                                        ''
                                     ],$length) 
                                 , $length) 
                             ); 
+
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '',
+                                        ''.$helper->currencyFormat('', $item->amount)
+                                    ],$length)
+                                , $length)
+                            );
+
+
                             $remarks = $item->remarks;
                             $sub_total += $item->amount;
                          }else{
@@ -642,10 +653,20 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '  + ('.$item->qty.')'.$item->name,
-                                        ''.$helper->currencyFormat('', $netamount)
+                                        ''
                                     ],$length) 
                                 , $length)
                             );
+
+                            $p->setText(
+                                $helper->EjCenterAlign(
+                                    $helper->EjJustifyAlign([
+                                        '',
+                                        ''.$helper->currencyFormat('', $netamount)
+                                    ],$length)
+                                , $length)
+                            );
+
                             $sub_total += $netamount;
                          } 
                      }
