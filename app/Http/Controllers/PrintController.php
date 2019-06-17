@@ -547,7 +547,7 @@ class PrintController extends Controller
              * DINE IN
              */
             if( $dine_in->count() > 0){
-                $p->feed();
+                //$p->feed();
                 $p->setText(
                     $helper->EjCenterAlign(
                     '---- Dine In ----' 
@@ -621,7 +621,7 @@ class PrintController extends Controller
              * TAKE OUT
              */
             if( $take_out->count() > 0){
-                $p->feed();
+                //$p->feed();
                 $p->setText(
                     $helper->EjCenterAlign(
                     '---- Take Out ----' 
@@ -725,7 +725,7 @@ class PrintController extends Controller
                 , $length)
             );
 
-            $p->feed(2);
+            $p->feed();
             $p->cut();
             $p->close();
             return json_encode($request->all());
