@@ -27,7 +27,7 @@ class PrintController extends Controller
             $length = $printer_width; 
 
             $p->setTitleHeader( 
-                'Enchanted Kingdom' 
+                'Datalogic Systems Corp.' 
             );
 
             /**
@@ -419,7 +419,7 @@ class PrintController extends Controller
             /**
              * QR Code for OS no.
              */
-            $p->setQrCode(''.$header->orderslip_header_id);
+            //$p->setQrCode(''.$header->orderslip_header_id);
 
             /**
              * ORDER SLIP NO.
@@ -472,7 +472,7 @@ class PrintController extends Controller
             /**
              * Customer Information
              */
-            $p->feed(); 
+            //$p->feed(); 
             if($header->mobile_number != null){
            
                 $p->setText(
@@ -511,7 +511,15 @@ class PrintController extends Controller
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->EjJustifyAlign([
-                        'HeadCount:',
+                        "No. of Guest(s) :",
+                        ''.$header->total_hc
+                    ],$length - 6)
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        "Table No. :",
                         ''.$header->total_hc
                     ],$length - 6)
                 , $length)
@@ -556,19 +564,19 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         $item->qty.'x '.$item->name,
-                                        ''
+                                        ''.$helper->currencyFormat('', $item->amount)
                                     ],$length) 
                                 , $length) 
                             ); 
                             
-                            $p->setText(
-                                $helper->EjCenterAlign(
-                                    $helper->EjJustifyAlign([
-                                        '',
-                                        ''.$helper->currencyFormat('', $item->amount)
-                                    ],$length)
-                                , $length)
-                            );
+                            // $p->setText(
+                            //     $helper->EjCenterAlign(
+                            //         $helper->EjJustifyAlign([
+                            //             '',
+                            //             ''.$helper->currencyFormat('', $item->amount)
+                            //         ],$length)
+                            //     , $length)
+                            // );
 
                             $remarks = $item->remarks;
                             $sub_total += $item->amount;
@@ -578,19 +586,19 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '  + ('.$item->qty.')'.$item->name,
-                                        ''
+                                        ''.$helper->currencyFormat('', $item->amount)
                                     ],$length) 
                                 , $length)
                             );
 
-                            $p->setText(
-                                $helper->EjCenterAlign(
-                                    $helper->EjJustifyAlign([
-                                        '',
-                                        ''.$helper->currencyFormat('', $item->amount)
-                                    ],$length)
-                                , $length)
-                            );
+                            // $p->setText(
+                            //     $helper->EjCenterAlign(
+                            //         $helper->EjJustifyAlign([
+                            //             '',
+                            //             ''.$helper->currencyFormat('', $item->amount)
+                            //         ],$length)
+                            //     , $length)
+                            // );
 
                             $sub_total += $netamount;
                          } 
@@ -630,19 +638,19 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         $item->qty.'x '.$item->name,
-                                        ''
+                                        ''.$helper->currencyFormat('', $item->amount)
                                     ],$length) 
                                 , $length) 
                             ); 
 
-                            $p->setText(
-                                $helper->EjCenterAlign(
-                                    $helper->EjJustifyAlign([
-                                        '',
-                                        ''.$helper->currencyFormat('', $item->amount)
-                                    ],$length)
-                                , $length)
-                            );
+                            // $p->setText(
+                            //     $helper->EjCenterAlign(
+                            //         $helper->EjJustifyAlign([
+                            //             '',
+                            //             ''.$helper->currencyFormat('', $item->amount)
+                            //         ],$length)
+                            //     , $length)
+                            // );
 
 
                             $remarks = $item->remarks;
@@ -653,19 +661,19 @@ class PrintController extends Controller
                                 $helper->EjCenterAlign(
                                     $helper->EjJustifyAlign([
                                         '  + ('.$item->qty.')'.$item->name,
-                                        ''
+                                        ''.$helper->currencyFormat('', $netamount)
                                     ],$length) 
                                 , $length)
                             );
 
-                            $p->setText(
-                                $helper->EjCenterAlign(
-                                    $helper->EjJustifyAlign([
-                                        '',
-                                        ''.$helper->currencyFormat('', $netamount)
-                                    ],$length)
-                                , $length)
-                            );
+                            // $p->setText(
+                            //     $helper->EjCenterAlign(
+                            //         $helper->EjJustifyAlign([
+                            //             '',
+                            //             ''.$helper->currencyFormat('', $netamount)
+                            //         ],$length)
+                            //     , $length)
+                            // );
 
                             $sub_total += $netamount;
                          } 
@@ -687,7 +695,7 @@ class PrintController extends Controller
             /**
              * Sub Total
              */ 
-            $p->feed();
+           // $p->feed();
             $p->setText(
                 $helper->EjCenterAlign(
                     $helper->charDuplicator('-', 16)
@@ -703,13 +711,13 @@ class PrintController extends Controller
             );
             
 
-            $p->feed(2);
+            $p->feed();
             $p->setText(
                 $helper->EjCenterAlign(
                 '!!! THANK YOU !!!' 
                 , $length)
             );
-            $p->feed(); 
+            //$p->feed(); 
 
             $p->setText(
                 $helper->EjCenterAlign(
@@ -717,7 +725,8 @@ class PrintController extends Controller
                 , $length)
             );
 
-            $p->feed(2); 
+            $p->feed(2);
+            $p->cut();
             $p->close();
             return json_encode($request->all());
         } catch (Exception $e) {

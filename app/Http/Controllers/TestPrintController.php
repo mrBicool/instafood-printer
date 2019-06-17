@@ -15,14 +15,14 @@ class TestPrintController extends Controller
     // 
     public function test(Request $request){
 
-        $connector = new NetworkPrintConnector("172.16.12.198", 9100);  
+        $connector = new NetworkPrintConnector("192.168.1.105", 9100);  
         //$connector = new WindowsPrintConnector(config( 'maintenance.printer_name'));
         $printer = new Printer($connector);
 
          
         $printer->text('1234567890123456789012345678901234567890123456');
         
-        // $printer->feed();
+        // $printer->feed(); 
         // $printer->setJustification(Printer::JUSTIFY_CENTER);
         // $printer->qrCode('47', Printer::QR_ECLEVEL_L,8);
         // $printer->setJustification(); // Reset

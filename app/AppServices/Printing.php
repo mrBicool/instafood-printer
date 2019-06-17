@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 class Printing {
 
     /**
@@ -21,13 +21,13 @@ class Printing {
      */
     public function __construct($printer_name)
     {
-        $connector = new WindowsPrintConnector($printer_name);
-
-        $this->printer = new Printer($connector);
+        //$connector    = new WindowsPrintConnector($printer_name);
+        $connector      = new NetworkPrintConnector("192.168.1.105", 9100);  
+        $this->printer  = new Printer($connector);
     }
 
     public function setTitleHeader( $val){
-        $this->printer->feed();
+        //$this->printer->feed();
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
         $this->printer->setTextSize(1, 2);
         $this->printer->text($val."\n");
@@ -54,6 +54,10 @@ class Printing {
             return false; 
         }
         $this->printer->feed($int);
+    }
+
+    public function cut(){
+        $this->printer->cut();
     }
 
     public function close(){
