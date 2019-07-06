@@ -15,8 +15,8 @@ class TestPrintController extends Controller
     // 
     public function test(Request $request){
 
-        $connector = new NetworkPrintConnector("192.168.1.105", 9100);  
-        //$connector = new WindowsPrintConnector(config( 'maintenance.printer_name'));
+        //$connector = new NetworkPrintConnector("192.168.1.105", 9100);  
+        $connector = new WindowsPrintConnector(config( 'maintenance.printer_name'));
         $printer = new Printer($connector);
 
          

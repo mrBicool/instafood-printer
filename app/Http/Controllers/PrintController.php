@@ -556,6 +556,9 @@ class PrintController extends Controller
             }
 
             $remarks = '';
+            $guest_no = '';
+            $guest_type = '';
+
             foreach($dine_in as $__item){
                 foreach($__item as $_item){
                      foreach($_item as $item){
@@ -579,6 +582,7 @@ class PrintController extends Controller
                             // );
 
                             $remarks = $item->remarks;
+                            $guest_no = $item->guest_no;
                             $sub_total += $item->amount;
                          }else{
                             $netamount = $item->qty * $item->srp;
@@ -603,19 +607,43 @@ class PrintController extends Controller
                             $sub_total += $netamount;
                          } 
                      }
-                }
-            } 
 
-            if($remarks != null || $remarks != ''){
-                $p->setText(
-                    $helper->EjCenterAlign(
-                        $helper->EjJustifyAlign([
-                            '  + '.$remarks,
-                            ''
-                        ],$length) 
-                    , $length)
-                );
+                    if($remarks != null || $remarks != ''){
+                        $p->setText(
+                            $helper->EjCenterAlign(
+                                $helper->EjJustifyAlign([
+                                    '  + '.$remarks,
+                                    ''
+                                ],$length) 
+                            , $length)
+                        );
+                    }
+
+                    $p->setText(
+                        $helper->EjCenterAlign(
+                            $helper->EjJustifyAlign([
+                                '  + Guest No.('.$guest_no.')',
+                                ''
+                            ],$length) 
+                        , $length)
+                    );
+
+
+
+
+                }
             }
+
+            // if($remarks != null || $remarks != ''){
+            //     $p->setText(
+            //         $helper->EjCenterAlign(
+            //             $helper->EjJustifyAlign([
+            //                 '  + '.$remarks,
+            //                 ''
+            //             ],$length) 
+            //         , $length)
+            //     );
+            // }
 
             /**
              * TAKE OUT
@@ -678,19 +706,30 @@ class PrintController extends Controller
                             $sub_total += $netamount;
                          } 
                      }
-                }
-            } 
 
-            if($remarks != null || $remarks != ''){
-                $p->setText(
-                    $helper->EjCenterAlign(
-                        $helper->EjJustifyAlign([
-                            '  + '.$remarks,
-                            ''
-                        ],$length) 
-                    , $length)
-                );
+                     if($remarks != null || $remarks != ''){
+                        $p->setText(
+                            $helper->EjCenterAlign(
+                                $helper->EjJustifyAlign([
+                                    '  + '.$remarks,
+                                    ''
+                                ],$length) 
+                            , $length)
+                        );
+                    }
+                }
             }
+
+            // if($remarks != null || $remarks != ''){
+            //     $p->setText(
+            //         $helper->EjCenterAlign(
+            //             $helper->EjJustifyAlign([
+            //                 '  + '.$remarks,
+            //                 ''
+            //             ],$length) 
+            //         , $length)
+            //     );
+            // }
              
             /**
              * Sub Total
