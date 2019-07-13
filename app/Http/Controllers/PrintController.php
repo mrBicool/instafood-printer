@@ -534,6 +534,7 @@ class PrintController extends Controller
              * ITEMs INITIALIZATION
              */
             $itemCollections    = collect( $details );
+            $discount = 0;
             $sub_total = 0;
 
             // dont know what to do here haha
@@ -584,6 +585,18 @@ class PrintController extends Controller
                             $remarks = $item->remarks;
                             $guest_no = $item->guest_no;
                             $sub_total += $item->amount;
+
+                            if($item->guest_type == 2 || $item->guest_type == 3){
+                                if($item->is_vatable == 1 || $item->is_vatable == '1'){
+                                    if($item->is_food == 1 || $item->is_food == '1'){
+                                        $price = $item->amount;
+                                        $price_wo_vat = ($price / 1.12);
+                                        $vat = $price_wo_vat * .12;
+                                        $discount += ($price_wo_vat * .20);
+                                    }
+                                }
+                            }
+
                          }else{
                             $netamount = $item->qty * $item->srp;
                             $p->setText(
@@ -628,22 +641,8 @@ class PrintController extends Controller
                         , $length)
                     );
 
-
-
-
                 }
             }
-
-            // if($remarks != null || $remarks != ''){
-            //     $p->setText(
-            //         $helper->EjCenterAlign(
-            //             $helper->EjJustifyAlign([
-            //                 '  + '.$remarks,
-            //                 ''
-            //             ],$length) 
-            //         , $length)
-            //     );
-            // }
 
             /**
              * TAKE OUT
@@ -684,6 +683,18 @@ class PrintController extends Controller
                             $remarks = $item->remarks;
                             $guest_no = $item->guest_no;
                             $sub_total += $item->amount;
+
+                            if($item->guest_type == 2 || $item->guest_type == 3){
+                                if($item->is_vatable == 1 || $item->is_vatable == '1'){
+                                    if($item->is_food == 1 || $item->is_food == '1'){
+                                        $price = $item->amount;
+                                        $price_wo_vat = ($price / 1.12);
+                                        $vat = $price_wo_vat * .12;
+                                        $discount += ($price_wo_vat * .20);
+                                    }
+                                }
+                            }
+
                          }else{
                             $netamount = $item->qty * $item->srp;
                             $p->setText(
@@ -727,19 +738,9 @@ class PrintController extends Controller
                             ],$length) 
                         , $length)
                     );
+
                 }
             }
-
-            // if($remarks != null || $remarks != ''){
-            //     $p->setText(
-            //         $helper->EjCenterAlign(
-            //             $helper->EjJustifyAlign([
-            //                 '  + '.$remarks,
-            //                 ''
-            //             ],$length) 
-            //         , $length)
-            //     );
-            // }
              
             /**
              * Sub Total
@@ -755,6 +756,22 @@ class PrintController extends Controller
                     $helper->EjJustifyAlign([
                         'Sub Total :',
                         ''.$helper->currencyFormat('', $sub_total)
+                    ],$length - 2) 
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'Discount :',
+                        ''.$helper->currencyFormat('', $discount)
+                    ],$length - 2) 
+                , $length)
+            );
+            $p->setText(
+                $helper->EjCenterAlign(
+                    $helper->EjJustifyAlign([
+                        'TOTAL :',
+                        ''.$helper->currencyFormat('', $sub_total - $discount)
                     ],$length - 2) 
                 , $length)
             );
