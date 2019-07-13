@@ -682,6 +682,7 @@ class PrintController extends Controller
 
 
                             $remarks = $item->remarks;
+                            $guest_no = $item->guest_no;
                             $sub_total += $item->amount;
                          }else{
                             $netamount = $item->qty * $item->srp;
@@ -707,7 +708,7 @@ class PrintController extends Controller
                          } 
                      }
 
-                     if($remarks != null || $remarks != ''){
+                    if($remarks != null || $remarks != ''){
                         $p->setText(
                             $helper->EjCenterAlign(
                                 $helper->EjJustifyAlign([
@@ -717,6 +718,15 @@ class PrintController extends Controller
                             , $length)
                         );
                     }
+
+                    $p->setText(
+                        $helper->EjCenterAlign(
+                            $helper->EjJustifyAlign([
+                                '  + Guest No.('.$guest_no.')',
+                                ''
+                            ],$length) 
+                        , $length)
+                    );
                 }
             }
 

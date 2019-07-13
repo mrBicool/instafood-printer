@@ -22,7 +22,7 @@ class Printing {
     public function __construct($printer_name)
     {
         $connector    = new WindowsPrintConnector($printer_name);
-        //$connector      = new NetworkPrintConnector("192.168.1.105", 9100);  
+        //$connector      = new NetworkPrintConnector("172.16.12.115", 9100);  
         $this->printer  = new Printer($connector);
     }
 
