@@ -584,6 +584,7 @@ class PrintController extends Controller
 
                             $remarks = $item->remarks;
                             $guest_no = $item->guest_no;
+                            $guest_type = $item->guest_type;
                             $sub_total += $item->amount;
 
                             if($item->guest_type == 2 || $item->guest_type == 3){
@@ -641,6 +642,15 @@ class PrintController extends Controller
                         , $length)
                     );
 
+                    $p->setText(
+                        $helper->EjCenterAlign(
+                            $helper->EjJustifyAlign([
+                                '  + Guest Type( '.$this->returnGuestType($guest_type).' )',
+                                ''
+                            ],$length) 
+                        , $length)
+                    );
+
                 }
             }
 
@@ -680,8 +690,9 @@ class PrintController extends Controller
                             // );
 
 
-                            $remarks = $item->remarks;
-                            $guest_no = $item->guest_no;
+                            $remarks    = $item->remarks;
+                            $guest_no   = $item->guest_no;
+                            $guest_type = $item->guest_type;
                             $sub_total += $item->amount;
 
                             if($item->guest_type == 2 || $item->guest_type == 3){
@@ -734,6 +745,15 @@ class PrintController extends Controller
                         $helper->EjCenterAlign(
                             $helper->EjJustifyAlign([
                                 '  + Guest No.('.$guest_no.')',
+                                ''
+                            ],$length) 
+                        , $length)
+                    );
+                    
+                    $p->setText(
+                        $helper->EjCenterAlign(
+                            $helper->EjJustifyAlign([
+                                '  + Guest Type( '.$this->returnGuestType($guest_type).' )',
                                 ''
                             ],$length) 
                         , $length)
@@ -819,4 +839,22 @@ class PrintController extends Controller
         } 
         return $newItems;
      }
+
+     private function returnGuestType($type){
+        
+        if($type == 1 || $type == '1'){
+            return 'Regular';
+        }
+
+        if($type == 2 || $type == '2'){
+            return 'Senior';
+        }
+
+        if($type == 3 || $type == '3'){
+            return 'Pwd';
+        }
+
+        return null;
+     }
+
 }
