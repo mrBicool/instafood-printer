@@ -727,7 +727,7 @@ class PrintController extends Controller
                             // );
 
                             $sub_total += $netamount;
-                         } 
+                         }
                      }
 
                     if($remarks != null || $remarks != ''){
@@ -815,8 +815,9 @@ class PrintController extends Controller
             $p->cut();
             $p->close();
             return json_encode($request->all());
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
+
+        }catch(\Exception $e) {
+            // Log::error($e->getMessage());
             return response()->json([
                 'success'   => false,
                 'error'     => $e->getMessage()
