@@ -590,7 +590,7 @@ class PrintController extends Controller
                                 if($item->is_vatable == 1 || $item->is_vatable == '1'){
                                     if($item->is_food == 1 || $item->is_food == '1'){
                                         $price = $item->amount;
-                                        $price_wo_vat = ($price / 1.12);
+                                        $price_wo_vat = ($price / 1.12); // price without tax
                                         $vat = $price_wo_vat * .12;
                                         $discount += ($price_wo_vat * .20);
                                     }
@@ -688,7 +688,7 @@ class PrintController extends Controller
                                 if($item->is_vatable == 1 || $item->is_vatable == '1'){
                                     if($item->is_food == 1 || $item->is_food == '1'){
                                         $price = $item->amount;
-                                        $price_wo_vat = ($price / 1.12);
+                                        $price_wo_vat = ($price / 1.12); // price without tax
                                         $vat = $price_wo_vat * .12;
                                         $discount += ($price_wo_vat * .20);
                                     }
